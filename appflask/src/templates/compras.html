@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table id="compras">
+        <tr>
+            <td>id_compra</td>
+            <td>id_cliente</td>
+            <td>fecha_compra</td>
+            <td>total</td> 
+        </tr>
+    </table>
+        
+    </div>
+    <script>
+        const comprasTotales = {{ comprasTotales|tojson }};
+
+        var contenedorCompra = document.getElementById('compras');
+        
+        comprasTotales.forEach(function(compra) {
+            var nuevaCompra = document.createElement('tr');
+            nuevaCompra.innerHTML=`
+                <td>${compra[0]}</td>
+                <td>${compra[1]}</td>
+                <td>${compra[2]}</td>
+                <td>${compra[3]}</td>
+            `
+            contenedorCompra.appendChild(nuevaCompra);
+        })
+        
+    
+    </script>
+</body>
+</html>

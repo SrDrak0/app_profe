@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  appdb:
+    container_name: appdb
+    build: ./appdb
+    ports:
+      - "3306:3306"
+
+  appflask:
+    container_name: appflask
+    build: ./appflask
+    ports:
+      - "5000:5000"
+    depends_on:
+      - appdb
+
+volumes:
+  db_data:

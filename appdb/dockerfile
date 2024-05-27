@@ -1,0 +1,3 @@
+FROM mysql
+ENV MYSQL_ROOT_PASSWORD=Pruebas@2024
+COPY ./negocio.sql /docker-entrypoint-initdb.d/

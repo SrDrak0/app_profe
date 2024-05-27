@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>desde el html</h1>
+    <form id="formulario" method="post">   
+        <div id="productos">
+        </div>
+        <div class="butons"> 
+            <button type="button" ctype="button"lass="Agregar" onclick="agregarcompra()">Agregar </button>
+        </div>
+        <div id="datos_compra">
+            <input type="text" name="id_cliente" id="id_cliente" required>
+            <input type="text" name="nombre_cliente" id="nombre_cliente" >
+            <input type="number" name="total_compra" id="total_compra" readonly>
+        </div>
+        <button type="submit" class="comprar" >comprar</button>
+    </form>
+   <script>
+    
+    const chart_data = {{ chart_data|tojson }};
+    
+    console.log(chart_data)
+
+    let operacionCount = 0;
+    var contenedorProductos = document.getElementById('productos');
+    var contendorDatosCliente = document.getElementById('datos_compra');
+    function datosCompra() {
+        var datosCliente = document.createElement('div');
+        datosCliente.innerHTML = `
+            
+        `
+        contendorDatosCliente.appendChild(datosCliente)
+    }
+    
+    let valorMantenido = 0;
+    var inputTotal = document.getElementById('total_compra');
+
+    function totalCompra(valor) {
+        // Verificar si el valor es numérico
+        if (isNaN(valor)) {
+            return "Error: El valor proporcionado no es un número.";
+        } else {
+            valorMantenido += valor;
+            inputTotal.value = valorMantenido
+        }
+    }
+
+    function agregarcompra() {
+        operacionCount++;
+        var nuevoProducto = document.createElement('div');
+        nuevoProducto.classList.add(`producto-${operacionCount}`);
+        nuevoProducto.innerHTML = `
+            <input id="id_producto-${operacionCount}" type="text" name="id_producto-${operacionCount}" class="valor" hidden>
+            <select id="name_producto-${operacionCount}" name="name_producto-${operacionCount}" >
+                <option value="" selected disabled>Elige un producto</option>
+            </select>
+            <select id="cant_producto-${operacionCount}" name="cant_producto-${operacionCount}"></select>
+            <input id="valor-${operacionCount}" type="text" name="valor-${operacionCount}" class="valor">
+            <input id="total-${operacionCount}" type="text" name="total-${operacionCount}" class="total">
+        `;
+
+        // Agregar nuevo producto al contenedor
+        contenedorProductos.appendChild(nuevoProducto);
+
+        // Agregar opciones de productos al nuevo select
+        var selectProductos = nuevoProducto.querySelector(`#name_producto-${operacionCount}`);
+        
+        chart_data.forEach(function(producto) {
+            var option = document.createElement('option');
+            option.text = producto.nombre;
+            option.value = producto.nombre;
+            selectProductos.appendChild(option);
+        });
+
+        
+        var opcionesCantidad = document.querySelector(`#cant_producto-${operacionCount}`);
+        var valorUnidad = document.querySelector(`#valor-${operacionCount}`);
+        var id_producto = document.querySelector(`#id_producto-${operacionCount}`);
+
+        // Agregar evento de cambio al nuevo select de productos
+        selectProductos.addEventListener('change', function() {
+            var id ;
+            var productoSeleccionado = selectProductos.value;
+            var cantidad;
+            var valor;
+
+            chart_data.forEach(function(producto) {
+                if (producto.nombre == productoSeleccionado) {
+                    cantidad = producto.stock
+                    valor = producto.valor
+                    id = producto.id
+                    }
+            });
+
+            opcionesCantidad.innerHTML = '';
+
+            for (var i = 1; i <= cantidad; i++) {
+                var option = document.createElement('option');
+                option.text = i;
+                option.value = i;
+                opcionesCantidad.appendChild(option);
+            }
+            id_producto.value = id
+            valorUnidad.value = valor
+        });     
+        var totalProducto = document.querySelector(`#total-${operacionCount}`);
+        opcionesCantidad.addEventListener('change', function(){
+            var cantidaSeleccionada = opcionesCantidad.value;
+            var valorUnidadInput = valorUnidad.value;
+            var total = cantidaSeleccionada * valorUnidadInput
+            totalProducto.value = total
+            totalCompra(total)
+        })
+    }
+    </script>
+    
+</body>
+</html>
